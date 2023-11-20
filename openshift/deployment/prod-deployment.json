@@ -1,0 +1,84 @@
+{
+  "apiVersion": "apps.openshift.io/v1",
+  "kind": "DeploymentConfig",
+  "metadata": {
+    "name": "dashboard-dg-front",
+    "labels": {
+      "app": "dashboard-dg-front",
+      "createdBy": "CoE-Team",
+      "env": "dsidashboarddg-isoprod",
+      "from": "jenkins-pipeline",
+      "template": "sonatel-docker-image",
+      "type": "react-app",
+      "version": "0.3"
+    }
+  },
+  "spec": {
+    "replicas": 2,
+    "strategy": {
+      "rollingParams": {
+        "intervalSeconds": 1,
+        "maxSurge": "25%",
+        "maxUnavailable": "25%",
+        "timeoutSeconds": 600,
+        "updatePeriodSeconds": 1
+      },
+      "type": "Rolling"
+    },
+    "selector": {},
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "dashboard-dg-front",
+          "createdBy": "CoE-Team",
+          "env": "dsidashboarddg-isoprod",
+          "from": "jenkins-pipeline",
+          "template": "sonatel-docker-image",
+          "type": "react-app",
+          "version": "0.3"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "dashboard-dg-front",
+            "image": "registry.tools.orange-sonatel.com/dif/selfcare-rh/dashboard-dg-front:0.3",
+            "imagePullPolicy": "Always",
+            "ports": [
+              {
+                "containerPort": 80,
+                "protocol": "TCP",
+                "name": "80-tcp"
+              }
+            ],
+            "resources": {
+              "limits": {
+                "cpu": "1",
+                "memory": "1Gi"
+              },
+              "requests": {
+                "cpu": "100m",
+                "memory": "256Mi"
+              }
+            },
+            "env": [
+              {
+                "name": "DATABASE_URL",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "administrative",
+                    "key": "DATABASE_URL"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "securityContext": {
+          "fsGroup": 0,
+          "runAsUser": 0
+        }
+      }
+    }
+  }
+}
