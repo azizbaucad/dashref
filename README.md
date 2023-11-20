@@ -1,3 +1,1 @@
-# Abstract
-
-DashRef App
+# DashRef App
